@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0b0e13">
+  <meta name="robots" content="noindex, nofollow">
+  <title>KAMU Angebote</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/icon-192.png">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+  <!-- PIN -->
+  <section id="screen-pin" class="screen pin" hidden>
+    <img class="pin-logo" src="icons/icon-192.png" alt="" width="72" height="72">
+    <h1 id="pin-title">PIN eingeben</h1>
+    <p id="pin-hint" class="muted"></p>
+    <div class="pin-dots" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+    <p id="pin-error" class="error" role="alert"></p>
+    <div class="pin-pad">
+      <button type="button" data-digit="1">1</button><button type="button" data-digit="2">2</button><button type="button" data-digit="3">3</button>
+      <button type="button" data-digit="4">4</button><button type="button" data-digit="5">5</button><button type="button" data-digit="6">6</button>
+      <button type="button" data-digit="7">7</button><button type="button" data-digit="8">8</button><button type="button" data-digit="9">9</button>
+      <button type="button" id="pin-reset" class="pin-small">Vergessen?</button>
+      <button type="button" data-digit="0">0</button>
+      <button type="button" id="pin-back" class="pin-small" aria-label="Löschen">⌫</button>
+    </div>
+  </section>
+
+  <!-- Start -->
+  <section id="screen-home" class="screen" hidden>
+    <header class="topbar"><h1>KAMU Angebote</h1></header>
+    <main class="content">
+      <h2 class="section-title">Neues Angebot</h2>
+      <div class="template-choice">
+        <button type="button" class="template-btn" data-template="werkstatt">
+          <img src="assets/logo-werkstatt.png" alt="" class="template-logo">
+          <span>Werkstatt</span>
+        </button>
+        <button type="button" class="template-btn teile" data-template="teile">
+          <img src="assets/logo-parts.png" alt="" class="template-logo">
+          <span>Teilegeschäft</span>
+        </button>
+      </div>
+      <h2 class="section-title">Verlauf</h2>
+      <ul id="history" class="history" role="list"></ul>
+      <p id="history-empty" class="empty muted">Noch keine Angebote. Wähle oben eine Vorlage.</p>
+    </main>
+  </section>
+
+  <!-- Editor -->
+  <section id="screen-editor" class="screen" hidden>
+    <header class="topbar">
+      <button type="button" id="editor-back" class="icon-btn" aria-label="Zurück">‹</button>
+      <h1 id="editor-title">Angebot</h1>
+    </header>
+    <main class="content editor">
+      <!-- Foto -->
+      <div class="card">
+        <h2 class="card-title">1. Foto</h2>
+        <div class="row">
+          <label class="btn btn-primary file-btn">Foto aufnehmen
+            <input type="file" id="photo-camera" accept="image/*" capture="environment" hidden>
+          </label>
+          <label class="btn file-btn">Aus Galerie
+            <input type="file" id="photo-gallery" accept="image/*" hidden>
+          </label>
+        </div>
+        <div id="photo-tools" hidden>
+          <div class="segmented" role="radiogroup" aria-label="Darstellung">
+            <button type="button" role="radio" data-mode="photo" aria-checked="true">Ganzes Foto</button>
+            <button type="button" role="radio" data-mode="blur" aria-checked="false">Hintergrund verwischen</button>
+          </div>
+          <div id="seg-status" class="status" hidden>
+            <div class="progress"><div id="seg-bar"></div></div>
+            <span id="seg-text">Wird vorbereitet …</span>
+          </div>
+          <button type="button" id="btn-plate" class="btn btn-ghost">Kennzeichen verpixeln</button>
+        </div>
+      </div>
+
+      <!-- Vorschau -->
+      <div class="card preview-card">
+        <div class="preview-head">
+          <h2 class="card-title">Vorschau</h2>
+          <div class="segmented small" role="radiogroup" aria-label="Format">
+            <button type="button" role="radio" data-format="story" aria-checked="true">9:16</button>
+            <button type="button" role="radio" data-format="square" aria-checked="false">1:1</button>
+          </div>
+        </div>
+        <div id="preview-wrap" class="preview-wrap">
+          <canvas id="preview" aria-label="Vorschau des Angebotsbilds"></canvas>
+          <div id="crop-hint" class="crop-hint" hidden>Mit einem Finger verschieben, mit zwei Fingern zoomen</div>
+        </div>
+        <div class="row">
+          <button type="button" id="btn-crop" class="btn btn-ghost" disabled>Ausschnitt anpassen</button>
+        </div>
+      </div>
+
+      <!-- Texte -->
+      <div class="card">
+        <h2 class="card-title">2. Angebot</h2>
+        <label class="field">Überschrift *
+          <input id="f-headline" type="text" maxlength="60" placeholder="z. B. Bremsen vorne komplett" autocomplete="off">
+        </label>
+        <div class="row two">
+          <label class="field">Preis *
+            <input id="f-price" type="text" inputmode="decimal" maxlength="14" placeholder="249 oder ab 100" autocomplete="off">
+          </label>
+          <label class="field">Statt-Preis
+            <input id="f-oldprice" type="text" inputmode="decimal" maxlength="14" placeholder="299" autocomplete="off">
+          </label>
+        </div>
+        <label class="field">Gültig bis
+          <input id="f-valid" type="date">
+        </label>
+        <fieldset class="features">
+          <legend>Merkmale (optional, bis zu 3)</legend>
+          <div class="feature-row" data-i="0">
+            <select aria-label="Symbol für Merkmal 1"></select>
+            <input type="text" maxlength="28" placeholder="z. B. Hohe Sicherheit" aria-label="Merkmal 1">
+          </div>
+          <div class="feature-row" data-i="1">
+            <select aria-label="Symbol für Merkmal 2"></select>
+            <input type="text" maxlength="28" placeholder="z. B. Fachgerechte Montage" aria-label="Merkmal 2">
+          </div>
+          <div class="feature-row" data-i="2">
+            <select aria-label="Symbol für Merkmal 3"></select>
+            <input type="text" maxlength="28" placeholder="z. B. VW Golf 7" aria-label="Merkmal 3">
+          </div>
+        </fieldset>
+      </div>
+
+      <!-- Fertig -->
+      <div class="card">
+        <h2 class="card-title">3. Fertig</h2>
+        <p id="save-error" class="error" role="alert"></p>
+        <button type="button" id="btn-share-story" class="btn btn-primary">Teilen – Status/Story (9:16)</button>
+        <button type="button" id="btn-share-square" class="btn">Teilen – Beitrag (1:1)</button>
+        <button type="button" id="btn-save" class="btn btn-ghost">Beide Bilder speichern</button>
+      </div>
+    </main>
+  </section>
+
+  <!-- Kennzeichen verpixeln -->
+  <section id="screen-plate" class="screen plate" hidden>
+    <header class="topbar">
+      <button type="button" id="plate-cancel" class="icon-btn" aria-label="Abbrechen">✕</button>
+      <h1>Kennzeichen verpixeln</h1>
+    </header>
+    <p class="plate-hint">Mit dem Finger einen Kasten über das Kennzeichen ziehen.</p>
+    <div class="plate-stage"><canvas id="plate-canvas"></canvas></div>
+    <div class="row plate-actions">
+      <button type="button" id="plate-undo" class="btn">Rückgängig</button>
+      <button type="button" id="plate-done" class="btn btn-primary">Fertig</button>
+    </div>
+  </section>
+
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+  <div id="busy" class="busy" hidden><div class="spinner" aria-hidden="true"></div><span id="busy-text">Einen Moment …</span></div>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
