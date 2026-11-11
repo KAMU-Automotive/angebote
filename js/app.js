@@ -48,7 +48,7 @@ function readOffer() {
   if (v) { const [, m, d] = v.split('-'); validUntil = `${+d}.${+m}.`; }
   return {
     headline: $('f-headline').value.trim(),
-    price: $('f-price').value.trim(),
+    price: (($('f-from').getAttribute('aria-pressed') === 'true' && $('f-price').value.trim()) ? 'ab ' : '') + $('f-price').value.trim(),
     oldPrice: $('f-oldprice').value.trim(),
     validUntil, validDate: v,
     features: feats,
@@ -57,7 +57,9 @@ function readOffer() {
 
 function writeOffer(o) {
   $('f-headline').value = o.headline || '';
-  $('f-price').value = o.price || '';
+  const m = String(o.price || '').match(/^ab\s*(.*)$/i);
+  $('f-from').setAttribute('aria-pressed', String(!!m));
+  $('f-price').value = m ? m[1] : (o.price || '');
   $('f-oldprice').value = o.oldPrice || '';
   $('f-valid').value = o.validDate || '';
   document.querySelectorAll('.feature-row').forEach((r, i) => {
@@ -428,6 +430,11 @@ function initEditor() {
     state.format = b.dataset.format; setSegmented('[data-format]', 'format', state.format); refresh();
   }));
   $('btn-crop').addEventListener('click', () => setCropMode(!cropping));
+  $('f-from').addEventListener('click', e => {
+    const on = e.currentTarget.getAttribute('aria-pressed') !== 'true';
+    e.currentTarget.setAttribute('aria-pressed', String(on));
+    state.dirty = true; refresh();
+  });
   $('btn-plate').addEventListener('click', openPlate);
   document.querySelector('.editor').addEventListener('input', e => {
     if (e.target.closest('.card') && !e.target.matches('[type=file]')) { state.dirty = true; refresh(); }

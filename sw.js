@@ -1,5 +1,5 @@
 // Service Worker: App offline verfügbar machen
-const VERSION = 'v1';
+const VERSION = 'v2';
 const APP_CACHE = 'kamu-app-' + VERSION;
 const MODEL_CACHE = 'kamu-ki-modell';   // bleibt über Updates hinweg erhalten
 const APP_FILES = [

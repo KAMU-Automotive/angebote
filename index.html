@@ -106,9 +106,13 @@
           <input id="f-headline" type="text" maxlength="60" placeholder="z. B. Bremsen vorne komplett" autocomplete="off">
         </label>
         <div class="row two">
-          <label class="field">Preis *
-            <input id="f-price" type="text" inputmode="decimal" maxlength="14" placeholder="249 oder ab 100" autocomplete="off">
-          </label>
+          <div class="field">
+            <label for="f-price">Preis *</label>
+            <div class="price-input">
+              <button type="button" id="f-from" class="from-toggle" aria-pressed="false" aria-label="Preis als ab-Preis anzeigen">ab</button>
+              <input id="f-price" type="text" inputmode="decimal" maxlength="10" placeholder="249" autocomplete="off">
+            </div>
+          </div>
           <label class="field">Statt-Preis
             <input id="f-oldprice" type="text" inputmode="decimal" maxlength="14" placeholder="299" autocomplete="off">
           </label>
